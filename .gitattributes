@@ -1,2 +1,29 @@
+# Set the default behavior for all files to be handled automatically.
+# This is a good baseline.
+* text=auto
+
+#
+# Add specific overrides below for consistency.
+# These files are text and should ALWAYS be normalized to LF in the repository.
+#
+*.java text eol=lf
+*.xml text eol=lf
+*.properties text eol=lf
+*.md text eol=lf
+*.sql text eol=lf
+*.yml text eol=lf
+*.json text eol=lf
+
+#
+# These script files have special requirements for different operating systems.
+# Keep these specific rules from Spring Initializr.
+#
 /mvnw text eol=lf
 *.cmd text eol=crlf
+
+#
+# These files are binary and should never be changed by Git.
+#
+*.jar binary
+*.png binary
+*.jpg binary
