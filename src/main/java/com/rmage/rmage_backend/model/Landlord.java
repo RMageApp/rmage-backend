@@ -17,6 +17,6 @@ public class Landlord extends BaseEntity{
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    User user;
+    private User user;
 
 }

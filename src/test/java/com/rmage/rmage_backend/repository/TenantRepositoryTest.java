@@ -35,11 +35,11 @@ public class TenantRepositoryTest {
 
         //Then
         assertThat(savedTenant).isNotNull();
-        assertThat((savedTenant).getId()).isNotNull();
-        assertThat((savedTenant).getUser().getEmail()).isEqualTo("test.tenant@example.com");
-        assertThat((savedTenant).getName()).isEqualTo("Test Tenant");
-        assertThat((savedTenant).getPhone()).isEqualTo("0987654321");
-        assertThat((savedTenant).getUser().getRole()).isEqualTo(Role.TENANT);
-        assertThat((savedTenant).getUser().getPassword()).isEqualTo("TestPassword123");
+        assertThat(savedTenant.getId()).isNotNull();
+        assertThat(savedTenant.getUser().getEmail()).isEqualTo("test.tenant@example.com");
+        assertThat(savedTenant.getName()).isEqualTo("Test Tenant");
+        assertThat(savedTenant.getPhone()).isEqualTo("0987654321");
+        assertThat(savedTenant.getUser().getRole()).isEqualTo(Role.TENANT);
+        assertThat(savedTenant.getUser().getPassword()).isEqualTo("TestPassword123");
     }
 }
