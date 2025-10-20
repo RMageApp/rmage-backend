@@ -18,32 +18,23 @@ public class LandlordRepositoryTest {
     @Autowired
     private LandlordRepository landlordRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
     @Test
     public void whenSaveLandlord_thenCanBeFoundById() {
         Landlord landlord = new Landlord();
-        User user = new User();
 
-        user.setEmail("test@example.com");
-        user.setPassword("TestPassword123");
-        user.setRole(Role.LANDLORD);
-
-        landlord.setUser(user);
+        landlord.setEmail("test@example.com");
         landlord.setPhone("123-456-7890");
         landlord.setName("Test Landlord");
 
         //When
         Landlord savedLandlord = landlordRepository.save(landlord);
+        Landlord foundLandlord = landlordRepository.findById(savedLandlord.getId()).orElse(null);
 
         //Then
-        assertThat(savedLandlord).isNotNull();
-        assertThat(savedLandlord.getId()).isNotNull();
-        assertThat(savedLandlord.getUser().getEmail()).isEqualTo("test@example.com");
-        assertThat(savedLandlord.getName()).isEqualTo("Test Landlord");
-        assertThat(savedLandlord.getPhone()).isEqualTo("123-456-7890");
-        assertThat(savedLandlord.getUser().getRole()).isEqualTo(Role.LANDLORD);
-        assertThat(savedLandlord.getUser().getPassword()).isEqualTo("TestPassword123");
+        assertThat(foundLandlord).isNotNull();
+        assertThat(foundLandlord.getId()).isNotNull();
+        assertThat(foundLandlord.getEmail()).isEqualTo("test@example.com");
+        assertThat(foundLandlord.getName()).isEqualTo("Test Landlord");
+        assertThat(foundLandlord.getPhone()).isEqualTo("123-456-7890");
     }
 }

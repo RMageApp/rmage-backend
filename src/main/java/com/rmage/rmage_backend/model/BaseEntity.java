@@ -15,8 +15,15 @@ import java.util.UUID;
 public class BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
+    @PrePersist
+    protected void onCreate() {
+        // Generate UUID only if not manually set
+        if (id == null) {
+            id = UUID.randomUUID();
+        }
+    }
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
