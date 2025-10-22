@@ -19,27 +19,21 @@ public class TenantRepositoryTest {
 
     @Test
     public void whenSaveTenant_thenCanBeFoundById() {
-        User user = new User();
         Tenant tenant = new Tenant();
 
-        user.setEmail("test.tenant@example.com");
-        user.setPassword("TestPassword123");
-        user.setRole(Role.TENANT);
-
-        tenant.setUser(user);
+        tenant.setEmail("test.tenant@example.com");
         tenant.setPhone("0987654321");
         tenant.setName("Test Tenant");
 
         //When
         Tenant savedTenant = tenantRepository.save(tenant);
+        Tenant foundTenant = tenantRepository.findById(savedTenant.getId()).orElse(null);
 
         //Then
-        assertThat(savedTenant).isNotNull();
-        assertThat(savedTenant.getId()).isNotNull();
-        assertThat(savedTenant.getUser().getEmail()).isEqualTo("test.tenant@example.com");
-        assertThat(savedTenant.getName()).isEqualTo("Test Tenant");
-        assertThat(savedTenant.getPhone()).isEqualTo("0987654321");
-        assertThat(savedTenant.getUser().getRole()).isEqualTo(Role.TENANT);
-        assertThat(savedTenant.getUser().getPassword()).isEqualTo("TestPassword123");
+        assertThat(foundTenant).isNotNull();
+        assertThat(foundTenant.getId()).isNotNull();
+        assertThat(foundTenant.getEmail()).isEqualTo("test.tenant@example.com");
+        assertThat(foundTenant.getName()).isEqualTo("Test Tenant");
+        assertThat(foundTenant.getPhone()).isEqualTo("0987654321");
     }
 }
