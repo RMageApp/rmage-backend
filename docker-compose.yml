@@ -1,34 +1,156 @@
+#services:
+#  mysql-db:
+#    image: mysql:8.0
+#    container_name: rmage-mysql
+#    restart: unless-stopped
+#    environment:
+#      MYSQL_ROOT_PASSWORD: 01234
+#      MYSQL_DATABASE: rmage_db
+#      MYSQL_USER: rmage_user
+#      MYSQL_PASSWORD: 1234
+#    ports:
+#      - "3333:3306"
+#    volumes:
+#      - mysql-data:/var/lib/mysql
+#      - ./init-scripts:/docker-entrypoint-initdb.d
+#  minio:
+#    image: minio/minio:latest
+#    container_name: rmage-minio
+#    restart: unless-stopped
+#    environment:
+#      MINIO_ROOT_USER: root
+#      MINIO_ROOT_PASSWORD: 01234
+#      MINIO_ACCESS_KEY: rmageAppAccessKey
+#      MINIO_SECRET_KEY: 1234
+#    ports:
+#      - "9000:9000"
+#      - "9001:9001"
+#    volumes:
+#      - minio-data:/data
+#    command: server /data --console-address ":9001"
+#
+#  adminer:
+#    image: adminer:latest
+#    container_name: rmage-adminer
+#    restart: always
+#    ports:
+#      - "8888:8080"
+#
+#  keycloak:
+#    image: quay.io/keycloak/keycloak:latest
+#    container_name: rmage-keycloak
+#    restart: always
+#    environment:
+#      KEYCLOAK_ADMIN: admin
+#      KEYCLOAK_ADMIN_PASSWORD: admin
+#    ports:
+#      - "9090:8080"
+#    volumes:
+#      - keycloak-data:/opt/keycloak/data
+#    command:
+#    - start-dev
+#    - --db=dev-file
+#
+#volumes:
+#  minio-data:
+#  mysql-data:
+#  keycloak-data:
+#    driver: local
+
+#-------------------------------------------------------------------------------------------------------------------------------------------
+
+# docker-compose.yml
+# Local development environment for RMage.
+# Requires a .env file in the same directory — see .env.example for required variables.
+# Start: docker compose up -d
+# Stop:  docker compose down
+# Wipe all data: docker compose down -v
+
+networks:
+  rmage-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+  minio-data:
+  keycloak-data:
+
 services:
+
   mysql-db:
     image: mysql:8.0
     container_name: rmage-mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: 01234
-      MYSQL_DATABASE: rmage_db
-      MYSQL_USER: rmage_user
-      MYSQL_PASSWORD: 1234
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql-data:/var/lib/mysql
-      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - rmage-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
   minio:
     image: minio/minio:latest
     container_name: rmage-minio
     restart: unless-stopped
     environment:
-      MINIO_ROOT_USER: root
-      MINIO_ROOT_PASSWORD: 01234
-      MINIO_ACCESS_KEY: rmageAppAccessKey
-      MINIO_SECRET_KEY: 1234
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - "9000:9000"   # S3-compatible API
+      - "9001:9001"   # MinIO web console
     volumes:
       - minio-data:/data
+    networks:
+      - rmage-network
     command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
-volumes:
-  minio-data:
-  mysql-data:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0
+    container_name: rmage-keycloak
+    restart: unless-stopped
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      # Point Keycloak at MySQL so realm config persists across restarts
+      KC_DB: mysql
+      KC_DB_URL: jdbc:mysql://mysql-db:3306/${MYSQL_DATABASE}
+      KC_DB_USERNAME: ${MYSQL_USER}
+      KC_DB_PASSWORD: ${MYSQL_PASSWORD}
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "false"
+    ports:
+      - "9090:8080"
+    networks:
+      - rmage-network
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    command: start-dev
+
+  adminer:
+    image: adminer:latest
+    container_name: rmage-adminer
+    restart: unless-stopped
+    ports:
+      - "8888:8080"
+    networks:
+      - rmage-network
+    depends_on:
+      mysql-db:
+        condition: service_healthy

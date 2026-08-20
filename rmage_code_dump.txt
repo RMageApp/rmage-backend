@@ -1,0 +1,642 @@
+﻿=== pom.xml ===
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.5.5</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.rmage</groupId>
+	<artifactId>rmage-backend</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>rmage-backend</name>
+	<description>The Spring Boot backend for the RMage Application</description>
+	<url/>
+	<licenses>
+		<license/>
+	</licenses>
+	<developers>
+		<developer/>
+	</developers>
+	<scm>
+		<connection/>
+		<developerConnection/>
+		<tag/>
+		<url/>
+	</scm>
+	<properties>
+		<java.version>17</java.version>
+        <org.mapstruct.version>1.6.3</org.mapstruct.version>
+        <lombok.version>1.18.36</lombok.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+			<optional>true</optional>
+		</dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${org.mapstruct.version}</version>
+        </dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+        <!-- Keycloak Admin Client for user management -->
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-admin-client</artifactId>
+            <version>26.0.7</version>
+        </dependency>
+
+        <!-- Spring Boot OAuth2 Resource Server for JWT validation -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<annotationProcessorPaths>
+                        <!-- Lombok must come first -->
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                        <!-- Mapstruct processor -->
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${org.mapstruct.version}</version>
+                        </path>
+                        <!-- Lombok-Mapstruct binding -->
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-mapstruct-binding</artifactId>
+                            <version>0.2.0</version>
+                        </path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
+
+=== application.properties ===
+spring.application.name=rmage-backend
+server.port=8080
+
+spring.datasource.url=jdbc:mysql://localhost:3333/rmage_db?useSSL=false&allowPublicKeyRetrieval=true
+spring.datasource.username=rmage_user
+spring.datasource.password=1234
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+
+# OAuth2 Resource Server Configuration (Keycloak JWT Validation)
+spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:9090/realms/rmage-realm
+spring.security.oauth2.resourceserver.jwt.jwk-set-uri=http://localhost:9090/realms/rmage-realm/protocol/openid-connect/certs
+
+# keycloak configuration
+keycloak.auth-server-url=http://localhost:9090
+keycloak.realm=rmage-realm
+keycloak.admin.username=admin
+keycloak.admin.password=admin
+keycloak.admin.client-id=admin-cli
+
+# S3 Configuration (MinIO)
+s3.endpoint=http://localhost:9000
+s3.access-key=rmageAppAccessKey
+s3.secret-key=1234
+s3.bucket-name=rmage-documents
+
+# Logging Configuration (Optional but recommended)
+logging.level.org.springframework.security=DEBUG
+logging.level.com.rmage=DEBUG
+logging.level.org.keycloak=DEBUG
+
+=== SecurityConfig.java ===
+package com.rmage.rmage_backend.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
+
+@Configuration
+@EnableWebSecurity
+@EnableMethodSecurity
+public class SecurityConfig {
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(authorizeRequests ->
+                        authorizeRequests
+                                .requestMatchers("/api/register","/api/health","/actuator/**").permitAll()
+                                .anyRequest().authenticated()
+                        )
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(new KeycloakJwtAuthenticationConverter()))
+                )
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                );
+        return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOriginPatterns(List.of("*")); // For development
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+}
+
+=== KeycloakConfig.java ===
+package com.rmage.rmage_backend.config;
+
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.KeycloakBuilder;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Slf4j
+@Configuration
+public class KeycloakConfig {
+    @Value("${keycloak.auth-server-url}")
+    private String authServerUrl;
+
+    @Value("${keycloak.realm}")
+    @Getter
+    private String realm;
+
+    @Value("${keycloak.admin.username}")
+    private String adminUsername;
+
+    @Value("${keycloak.admin.password}")
+    private String adminPassword;
+
+    @Value("${keycloak.admin.client-id}")
+    private String adminClientId;
+
+    @Bean
+    public Keycloak keycloak() {
+        log.info("Initializing Keycloak Admin Client for realm: {}", realm);
+        return KeycloakBuilder.builder()
+                .serverUrl(authServerUrl)
+                .realm("master") // Admin client uses master realm
+                .clientId(adminClientId)
+                .username(adminUsername)
+                .password(adminPassword)
+                .build();
+    }
+}
+
+=== KeycloakJwtAuthenticationConverter.java ===
+package com.rmage.rmage_backend.config;
+
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public class KeycloakJwtAuthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
+
+    @Override
+    public AbstractAuthenticationToken convert(Jwt jwt) {
+        Collection<GrantedAuthority> authorities = extractAuthorities(jwt);
+        return new JwtAuthenticationToken(jwt, authorities);
+    }
+
+    private Collection<GrantedAuthority> extractAuthorities(Jwt jwt) {
+        Map<String, Object> realmAccess = jwt.getClaimAsMap("realm_access");
+
+        if (realmAccess == null || !realmAccess.containsKey("roles")) {
+            return List.of();
+        }
+
+        @SuppressWarnings("unchecked")
+        List<String> roles = (List<String>) realmAccess.get("roles");
+
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                .collect(Collectors.toList());
+    }
+}
+
+=== BaseEntity.java ===
+package com.rmage.rmage_backend.model;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Getter
+@Setter
+@MappedSuperclass
+public class BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private boolean isActive = true;
+}
+
+=== User.java ===
+package com.rmage.rmage_backend.model;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.UUID;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "users")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "role", discriminatorType = DiscriminatorType.STRING)
+public class User extends BaseEntity{
+
+    /**
+     * Base user class using inheritance with discriminator column.
+     * User types are differentiated by the "role" column with values from Role enum.
+     *
+     * @see Tenant
+     * @see Landlord
+     */
+
+    private String name;
+
+    private String phone;
+
+    @Column(unique = true, nullable = false)
+    private String email;
+
+    @Column(name = "keycloak_id", unique = true, nullable = true)
+    private String keycloakId;
+}
+
+=== Landlord.java ===
+package com.rmage.rmage_backend.model;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.UUID;
+
+@Getter
+@Setter
+@Entity
+@DiscriminatorValue("LANDLORD")
+public class Landlord extends User{
+}
+
+=== Tenant.java ===
+package com.rmage.rmage_backend.model;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Entity
+@DiscriminatorValue("TENANT")
+public class Tenant extends User {
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status;
+}
+
+=== Role.java ===
+package com.rmage.rmage_backend.model;
+
+public enum Role {
+    LANDLORD,
+    TENANT
+}
+
+=== Status.java ===
+package com.rmage.rmage_backend.model;
+
+public enum Status {
+    PENDING,
+    ACTIVE,
+    MOVED_OUT
+}
+
+=== AuthController.java ===
+package com.rmage.rmage_backend.controller;
+
+import com.rmage.rmage_backend.dto.ApiResponse;
+import com.rmage.rmage_backend.dto.RegisterRequest;
+import com.rmage.rmage_backend.service.KeycloakService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@Slf4j
+@RestController
+@RequestMapping("/api")
+@RequiredArgsConstructor
+public class AuthController {
+
+    private final KeycloakService keycloakService;
+
+    @PostMapping("/register")
+    public ResponseEntity<ApiResponse> register(@Valid @RequestBody RegisterRequest request) {
+        try {
+            log.info("Registration request received for: {}", request.getEmail());
+            keycloakService.createUser(request);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new ApiResponse("User registered successfully", true));
+        } catch (RuntimeException e) {
+            log.error("Registration failed: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse(e.getMessage(), false));
+        }
+    }
+
+    @GetMapping("/health")
+    public ResponseEntity<ApiResponse> health() {
+        return ResponseEntity.ok(new ApiResponse("Service is UP", true));
+    }
+}
+
+=== KeycloakService.java ===
+package com.rmage.rmage_backend.service;
+
+import com.rmage.rmage_backend.config.KeycloakConfig;
+import com.rmage.rmage_backend.dto.RegisterRequest;
+import jakarta.ws.rs.core.Response;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.RealmResource;
+import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.RoleRepresentation;
+import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.asm.TypeReference;
+import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class KeycloakService {
+
+    private final Keycloak keycloak;
+    private final KeycloakConfig keycloakConfig;
+
+    public void createUser(RegisterRequest request) {
+        log.info("Creating user in Keycloak: {}", request.getEmail());
+
+        RealmResource realmResource = keycloak.realm(keycloakConfig.getRealm());
+        UsersResource usersResource = realmResource.users();
+
+        // Check if user already exists
+        List<UserRepresentation> existingUsers = usersResource.searchByEmail(request.getEmail(), true);
+        if (!existingUsers.isEmpty()) {
+            throw new RuntimeException("User already exists with email: " + request.getEmail());
+        }
+
+        // Create user representation
+        UserRepresentation user = new UserRepresentation();
+        user.setEnabled(true);
+        user.setUsername(request.getEmail());
+        user.setEmail(request.getEmail());
+        user.setEmailVerified(true);
+
+        // Create user
+        Response response = usersResource.create(user);
+
+        if (response.getStatus() != 201) {
+            String error = response.readEntity(String.class);
+            log.error("Failed to create user: {}", error);
+            throw new RuntimeException("Failed to create user: " + error);
+        }
+
+        // Extract user ID from Location header
+        String locationHeader = response.getHeaderString("Location");
+        String userId = locationHeader.substring(locationHeader.lastIndexOf('/') + 1);
+        log.info("User created with ID: {}", userId);
+
+        // Set password
+        setPassword(usersResource, userId, request.getPassword());
+
+        // Assign role
+        assignRole(realmResource, userId, request.getRole());
+
+        log.info("User registration completed successfully for: {}", request.getEmail());
+    }
+
+    private void setPassword(UsersResource usersResource, String userId, String password) {
+        CredentialRepresentation credential = new CredentialRepresentation();
+        credential.setTemporary(false);
+        credential.setType(CredentialRepresentation.PASSWORD);
+        credential.setValue(password);
+
+        usersResource.get(userId).resetPassword(credential);
+        log.info("Password set for user ID: {}", userId);
+    }
+
+    private void assignRole(RealmResource realmResource, String userId, String roleName) {
+        RoleRepresentation role = realmResource.roles().get(roleName).toRepresentation();
+        realmResource.users().get(userId).roles().realmLevel().add(Collections.singletonList(role));
+        log.info("Role {} assigned to user ID: {}", roleName, userId);
+    }
+}
+
+=== ApiResponse.java ===
+package com.rmage.rmage_backend.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class ApiResponse {
+    private String message;
+    private boolean success;
+}
+
+=== RegisterRequest.java ===
+package com.rmage.rmage_backend.dto;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import lombok.Data;
+
+@Data
+public class RegisterRequest {
+
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
+    private String email;
+
+    @NotBlank(message = "Password is required")
+    @Pattern(
+        regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$",
+        message = "Password must be at least 8 characters with uppercase, lowercase, number, and special character"
+    )
+    private String password;
+
+    @NotBlank(message = "Role is required")
+    @Pattern(regexp = "LANDLORD|TENANT", message = "Role must be either LANDLORD or TENANT")
+    private String role;
+}
+
+=== GlobalExceptionHandler.java ===
+package com.rmage.rmage_backend.exception;
+
+import com.rmage.rmage_backend.dto.ApiResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Slf4j
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleValidationExceptions(
+            MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach(error -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return ResponseEntity.badRequest().body(errors);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse> handleGenericException(Exception ex) {
+        log.error("Unhandled exception: ", ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ApiResponse("An error occurred: " + ex.getMessage(), false));
+    }
+}

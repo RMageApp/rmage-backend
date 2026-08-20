@@ -28,4 +28,7 @@ public class User extends BaseEntity{
 
     @Column(unique = true, nullable = false)
     private String email;
+
+    @Column(name = "keycloak_id", unique = true, nullable = true)
+    private String keycloakId;
 }
