@@ -9,4 +9,7 @@ import lombok.Setter;
 @Entity
 @DiscriminatorValue("TENANT")
 public class Tenant extends User {
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status;
 }
