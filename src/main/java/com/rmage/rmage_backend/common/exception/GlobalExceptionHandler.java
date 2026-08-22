@@ -1,6 +1,6 @@
-package com.rmage.rmage_backend.exception;
+package com.rmage.rmage_backend.common.exception;
 
-import com.rmage.rmage_backend.dto.ApiResponse;
+import com.rmage.rmage_backend.common.dto.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,6 +1,5 @@
-package com.rmage.rmage_backend.repository;
+package com.rmage.rmage_backend.tenant;
 
-import com.rmage.rmage_backend.model.Tenant;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;

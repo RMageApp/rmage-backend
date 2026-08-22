@@ -1,7 +1,7 @@
-package com.rmage.rmage_backend.service;
+package com.rmage.rmage_backend.integration.keycloak;
 
 import com.rmage.rmage_backend.config.KeycloakConfig;
-import com.rmage.rmage_backend.dto.RegisterRequest;
+import com.rmage.rmage_backend.common.dto.RegisterRequest;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +11,6 @@ import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
-import org.springframework.asm.TypeReference;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;

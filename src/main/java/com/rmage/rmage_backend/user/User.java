@@ -1,10 +1,11 @@
-package com.rmage.rmage_backend.model;
+package com.rmage.rmage_backend.user;
 
+import com.rmage.rmage_backend.common.entity.BaseEntity;
+import com.rmage.rmage_backend.landlord.Landlord;
+import com.rmage.rmage_backend.tenant.Tenant;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -12,7 +13,7 @@ import java.util.UUID;
 @Table(name = "users")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "role", discriminatorType = DiscriminatorType.STRING)
-public class User extends BaseEntity{
+public class User extends BaseEntity {
 
     /**
      * Base user class using inheritance with discriminator column.

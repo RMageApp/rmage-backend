@@ -1,4 +1,4 @@
-package com.rmage.rmage_backend.model;
+package com.rmage.rmage_backend.common.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

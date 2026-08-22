@@ -1,4 +1,4 @@
-package com.rmage.rmage_backend.dto;
+package com.rmage.rmage_backend.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
