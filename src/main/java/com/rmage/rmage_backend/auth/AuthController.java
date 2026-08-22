@@ -1,8 +1,8 @@
-package com.rmage.rmage_backend.controller;
+package com.rmage.rmage_backend.auth;
 
-import com.rmage.rmage_backend.dto.ApiResponse;
-import com.rmage.rmage_backend.dto.RegisterRequest;
-import com.rmage.rmage_backend.service.KeycloakService;
+import com.rmage.rmage_backend.common.dto.ApiResponse;
+import com.rmage.rmage_backend.common.dto.RegisterRequest;
+import com.rmage.rmage_backend.integration.keycloak.KeycloakService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

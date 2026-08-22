@@ -1,5 +1,6 @@
-package com.rmage.rmage_backend.model;
+package com.rmage.rmage_backend.tenant;
 
+import com.rmage.rmage_backend.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,5 +12,5 @@ import lombok.Setter;
 public class Tenant extends User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Status status;
+    private TenantStatus status;
 }

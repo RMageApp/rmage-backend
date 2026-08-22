@@ -1,4 +1,4 @@
-package com.rmage.rmage_backend.dto;
+package com.rmage.rmage_backend.common.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

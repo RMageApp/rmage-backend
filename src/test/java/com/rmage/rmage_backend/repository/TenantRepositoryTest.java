@@ -1,8 +1,7 @@
 package com.rmage.rmage_backend.repository;
 
-import com.rmage.rmage_backend.model.Role;
-import com.rmage.rmage_backend.model.Tenant;
-import com.rmage.rmage_backend.model.User;
+import com.rmage.rmage_backend.tenant.Tenant;
+import com.rmage.rmage_backend.tenant.TenantRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
